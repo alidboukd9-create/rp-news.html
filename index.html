@@ -1,408 +1,125 @@
-<!doctype html>
-<html lang="en">
+<!DOCTYPE html>
+<html>
 <head>
-  <meta charset="utf-8"/>
-  <meta name="viewport" content="width=device-width,initial-scale=1"/>
-  <title>RP News</title>
-  <style>
-    :root{--bg:#070b14;--card:#0e1627;--line:#21304e;--text:#eaf0ff;--muted:#aab6d6}
-    *{box-sizing:border-box}
-    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial;background:radial-gradient(1200px 700px at 20% -10%, #1a2c6b 0%, rgba(26,44,107,0) 60%), var(--bg);color:var(--text)}
-    header{position:sticky;top:0;z-index:20;background:rgba(7,11,20,.7);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
-    .top{max-width:1100px;margin:0 auto;padding:14px 16px;display:flex;gap:10px;align-items:center;justify-content:space-between}
-    .brand{display:flex;gap:10px;align-items:center}
-    .logo{width:36px;height:36px;border-radius:12px;background:linear-gradient(135deg,#4d7cff,#8a5cff);display:grid;place-items:center;font-weight:900}
-    .brand h1{margin:0;font-size:16px;letter-spacing:.3px}
-    .tabs{display:flex;gap:8px;flex-wrap:wrap}
-    .tab{padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(14,22,39,.9);color:var(--text);cursor:pointer;font-weight:800}
-    .tab.active{outline:2px solid rgba(77,124,255,.35)}
-    .right{display:flex;gap:10px;align-items:center}
-    .pill{padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(14,22,39,.9);font-size:12px;color:var(--muted)}
-    .btn{padding:9px 12px;border-radius:12px;border:1px solid var(--line);background:rgba(14,22,39,.9);color:var(--text);cursor:pointer;font-weight:900}
-    .btn.primary{background:linear-gradient(135deg,#4d7cff,#8a5cff);border:none}
-    .wrap{max-width:1100px;margin:0 auto;padding:16px;display:grid;gap:14px}
-    .card{background:rgba(14,22,39,.9);border:1px solid var(--line);border-radius:18px;padding:14px}
-    .title{font-size:18px;font-weight:950;margin:0}
-    .sub{color:var(--muted);margin:6px 0 0 0;font-size:13px}
-    .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
-    input,textarea,select{
-      width:100%;padding:11px 12px;border-radius:12px;border:1px solid var(--line);
-      background:rgba(11,18,32,.9);color:var(--text);outline:none
-    }
-    textarea{min-height:140px;resize:vertical}
-    .grid{display:grid;gap:12px}
-    @media(min-width:900px){.grid.two{grid-template-columns:1fr 1fr}}
-    .news{display:grid;gap:10px}
-    .post{border:1px solid var(--line);background:rgba(11,18,32,.9);border-radius:18px;padding:12px;display:grid;gap:8px}
-    .postTop{display:flex;gap:10px;align-items:center;justify-content:space-between}
-    .postTitle{font-weight:950}
-    .meta{display:flex;gap:8px;flex-wrap:wrap;color:var(--muted);font-size:12px}
-    .tag{border:1px solid var(--line);border-radius:999px;padding:3px 9px;font-size:12px}
-    .flag{font-size:18px}
-    .hidden{display:none !important}
-    .warn{border:1px solid #5a2a2a;background:rgba(40,10,10,.55)}
-    .ok{border:1px solid #1f4a3a;background:rgba(8,28,18,.55)}
-    .small{font-size:12px;color:var(--muted)}
-  </style>
+<meta charset="UTF-8">
+<title>RP News</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+body { margin:0; font-family:Arial; background:#0b0f1a; color:white; }
+header { background:#11162a; padding:10px; display:flex; gap:8px; flex-wrap:wrap; }
+button { background:#1c2450; color:white; border:none; padding:8px 14px; border-radius:6px; }
+section { display:none; padding:15px; }
+section.active { display:block; }
+input, textarea, select {
+  width:100%; padding:8px; margin:6px 0; border-radius:6px; border:none;
+}
+.news { background:#141a35; padding:12px; border-radius:8px; margin-bottom:10px; }
+.small { font-size:12px; opacity:.7; }
+</style>
 </head>
+
 <body>
+
 <header>
-  <div class="top">
-    <div class="brand">
-      <div class="logo">🛰️</div>
-      <div>
-        <h1>RP News System</h1>
-        <div class="small">Public feed • Login to post</div>
-      </div>
-    </div>
-
-    <div class="tabs">
-      <button class="tab active" data-view="news">News</button>
-      <button class="tab" data-view="post">Post News</button>
-      <button class="tab" data-view="flag">Change Flag</button>
-      <button class="tab" data-view="login">Login</button>
-    </div>
-
-    <div class="right">
-      <div id="sessionPill" class="pill">Not logged in</div>
-      <button id="logoutBtn" class="btn hidden">Logout</button>
-    </div>
-  </div>
+  <button onclick="show('news')">News</button>
+  <button onclick="show('post')">Post News</button>
+  <button onclick="show('login')">Login</button>
 </header>
 
-<div class="wrap">
-  <section id="view-news" class="card">
-    <div class="row" style="justify-content:space-between">
-      <div>
-        <p class="title">Latest News</p>
-        <p class="sub">Everyone can see this feed. Newest first.</p>
-      </div>
-      <div class="row">
-        <input id="q" placeholder="Search..." style="width:220px"/>
-        <select id="tagFilter" style="width:160px">
-          <option value="all">All tags</option>
-          <option>Breaking</option><option>War</option><option>Diplomacy</option>
-          <option>Economy</option><option>Internal</option><option>Other</option>
-        </select>
-        <button id="refreshBtn" class="btn">Refresh</button>
-      </div>
-    </div>
-    <div id="newsList" class="news" style="margin-top:12px"></div>
-  </section>
+<section id="news" class="active">
+  <h2>Latest News</h2>
+  <div id="newsList"></div>
+</section>
 
-  <section id="view-post" class="card hidden">
-    <p class="title">Post News</p>
-    <p class="sub">Country auto-fills from your account.</p>
+<section id="post">
+  <h2>Post News</h2>
+  <div id="blocked">Login required.</div>
+  <div id="postForm" style="display:none">
+    <input id="title" placeholder="Title">
+    <textarea id="body" placeholder="News text"></textarea>
+    <select id="tag">
+      <option>Breaking</option>
+      <option>War</option>
+      <option>Diplomacy</option>
+      <option>Economy</option>
+      <option>Other</option>
+    </select>
+    <button onclick="publish()">Publish</button>
+  </div>
+</section>
 
-    <div id="postNeedLogin" class="card warn" style="margin-top:12px">
-      <b>Login first</b>
-      <div class="small">Go to Login tab.</div>
-    </div>
+<section id="login">
+  <h2>Login</h2>
+  <input id="user" placeholder="Username">
+  <input id="pass" type="password" placeholder="Password">
+  <button onclick="login()">Login</button>
+  <div class="small" id="msg"></div>
+</section>
 
-    <div id="postForm" class="grid hidden" style="margin-top:12px">
-      <div class="grid two">
-        <div>
-          <div class="small">Country (auto)</div>
-          <input id="country" placeholder="Auto..." readonly />
-          <div class="small" style="margin-top:6px">If it’s blank, go to Change Flag once and set it.</div>
-        </div>
-        <div>
-          <div class="small">Tag</div>
-          <select id="tag">
-            <option>Breaking</option><option>War</option><option>Diplomacy</option>
-            <option>Economy</option><option>Internal</option><option>Other</option>
-          </select>
-        </div>
-      </div>
-      <div>
-        <div class="small">Title</div>
-        <input id="title" placeholder="Type title..." maxlength="90"/>
-      </div>
-      <div>
-        <div class="small">Body</div>
-        <textarea id="body" placeholder="Write the news..."></textarea>
-      </div>
-      <div class="row">
-        <button id="publishBtn" class="btn primary">Publish</button>
-        <span id="postMsg" class="small"></span>
-      </div>
-    </div>
-  </section>
-
-  <section id="view-flag" class="card hidden">
-    <p class="title">Change Flag</p>
-    <p class="sub">Optional. Set country + flag once and you’re done.</p>
-
-    <div id="flagNeedLogin" class="card warn" style="margin-top:12px">
-      <b>Login first</b>
-      <div class="small">Go to Login tab.</div>
-    </div>
-
-    <div id="flagForm" class="grid hidden" style="margin-top:12px">
-      <div class="grid two">
-        <div>
-          <div class="small">Your Country</div>
-          <input id="myCountry" placeholder="e.g. RR"/>
-        </div>
-        <div>
-          <div class="small">Your Flag</div>
-          <input id="myFlag" placeholder="e.g. 🇱🇧"/>
-        </div>
-      </div>
-      <div class="row">
-        <button id="saveFlagBtn" class="btn primary">Save</button>
-        <span id="flagMsg" class="small"></span>
-      </div>
-    </div>
-  </section>
-
-  <section id="view-login" class="card hidden">
-    <p class="title">Login</p>
-    <p class="sub">No sign up. Only your pre-made accounts.</p>
-
-    <div class="grid two" style="margin-top:12px">
-      <div>
-        <div class="small">Username</div>
-        <input id="user" placeholder="e.g. Aloushi"/>
-      </div>
-      <div>
-        <div class="small">Password</div>
-        <input id="pass" type="password" placeholder="••••••••"/>
-      </div>
-    </div>
-    <div class="row" style="margin-top:12px">
-      <button id="loginBtn" class="btn primary">Login</button>
-      <span id="loginMsg" class="small"></span>
-    </div>
-  </section>
-</div>
-
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-  // ✅ ONLY PASTE THESE 2 VALUES (from Supabase Settings → API)
-  const SUPABASE_URL = "YOUR_SUPABASE_URL";
-  const SUPABASE_ANON_KEY = "YOUR_SUPABASE_ANON_KEY";
-  const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+const USERS = {
+  "Aloushi":"AloushiOk",
+  "Hamoudi haidar":"9928",
+  "Rayano":"XYBIUY",
+  "Hamoudi 2 (hteit)":"xiwps68",
+  "Aloushi fares":"9usidjOheU"
+};
 
-  const USER_EMAIL = {
-    "Aloushi": "aloushi@rp.local",
-    "Hamoudi haidar": "hamoudi.haidar@rp.local",
-    "Rayano": "rayano@rp.local",
-    "Hamoudi 2 (hteit)": "hamoudi2@rp.local",
-    "Aloushi fares": "aloushi.fares@rp.local",
-  };
+let currentUser = null;
+let news = JSON.parse(localStorage.getItem("rp_news") || "[]");
 
-  // Defaults (Aloushi fares intentionally blank)
-  const USER_COUNTRY = {
-    "Hamoudi haidar": "UWK",
-    "Rayano": "WL",
-    "Aloushi": "RR",
-    "Hamoudi 2 (hteit)": "F.E",
-    "Aloushi fares": ""
-  };
+function show(id){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  document.getElementById(id).classList.add("active");
+}
 
-  const $ = (id) => document.getElementById(id);
-  const views = ["news","post","flag","login"];
-  const clean = (s) => (s ?? "").toString().trim();
+function save(){
+  localStorage.setItem("rp_news", JSON.stringify(news));
+}
 
-  function setTab(view){
-    document.querySelectorAll(".tab").forEach(t => t.classList.toggle("active", t.dataset.view === view));
-    views.forEach(v => $("view-"+v).classList.toggle("hidden", v !== view));
-  }
-  document.querySelectorAll(".tab").forEach(t => t.addEventListener("click", () => setTab(t.dataset.view)));
-
-  function escapeHtml(str){
-    return (str ?? "").toString()
-      .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
-      .replaceAll('"',"&quot;").replaceAll("'","&#039;");
-  }
-
-  function setLoggedOutUI(){
-    $("sessionPill").textContent = "Not logged in";
-    $("logoutBtn").classList.add("hidden");
-    $("postNeedLogin").classList.remove("hidden");
-    $("postForm").classList.add("hidden");
-    $("flagNeedLogin").classList.remove("hidden");
-    $("flagForm").classList.add("hidden");
-  }
-
-  async function ensureProfile(user){
-    const username = user.user_metadata?.username || "(unknown)";
-    const { data: existing } = await supabase.from("profiles").select("*").eq("uid", user.id).maybeSingle();
-
-    const applyUI = (p) => {
-      $("sessionPill").textContent = `Logged in: ${p.flag} ${p.username}`;
-      $("country").value = p.country || "";
-      $("myCountry").value = p.country || "";
-      $("myFlag").value = p.flag || "🏳️";
-      $("postNeedLogin").classList.add("hidden");
-      $("postForm").classList.remove("hidden");
-      $("flagNeedLogin").classList.add("hidden");
-      $("flagForm").classList.remove("hidden");
-    };
-
-    if(existing){ applyUI(existing); return existing; }
-
-    const defaultCountry = USER_COUNTRY[username] ?? "";
-    const { data: created } = await supabase
-      .from("profiles")
-      .insert({ uid:user.id, username, country: defaultCountry, flag:"🏳️" })
-      .select("*").single();
-
-    if(created) applyUI(created);
-  }
-
-  async function loadNews(){
-    const q = clean($("q").value).toLowerCase();
-    const tf = $("tagFilter").value;
-
-    const { data: posts, error } = await supabase
-      .from("news_posts").select("*")
-      .order("created_at", { ascending:false })
-      .limit(200);
-
-    if(error){
-      $("newsList").innerHTML = `<div class="small">Error loading news (check URL/key).</div>`;
-      return;
-    }
-
-    const { data: profs } = await supabase.from("profiles").select("uid,flag");
-    const byUid = new Map((profs || []).map(p => [p.uid, p]));
-
-    const filtered = (posts || []).filter(p => {
-      const matchesTag = (tf === "all") || (p.tag === tf);
-      const blob = `${p.title} ${p.country} ${p.tag} ${p.body} ${p.author}`.toLowerCase();
-      const matchesQ = !q || blob.includes(q);
-      return matchesTag && matchesQ;
-    });
-
-    if(filtered.length === 0){
-      $("newsList").innerHTML = `<div class="small">No posts yet.</div>`;
-      return;
-    }
-
-    $("newsList").innerHTML = filtered.map(p => {
-      const flag = byUid.get(p.author_uid)?.flag || "🏳️";
-      const when = new Date(p.created_at).toLocaleString();
-      return `
-        <div class="post">
-          <div class="postTop">
-            <div class="row" style="gap:8px">
-              <span class="flag">${flag}</span>
-              <div class="postTitle">${escapeHtml(p.title)}</div>
-            </div>
-            <div class="row" style="gap:8px">
-              <span class="tag">${escapeHtml(p.tag)}</span>
-              <span class="tag">🏷️ ${escapeHtml(p.country)}</span>
-            </div>
-          </div>
-          <div class="meta">
-            <span>By <b>${escapeHtml(p.author)}</b></span>
-            <span>•</span>
-            <span>${escapeHtml(when)}</span>
-          </div>
-          <div style="white-space:pre-wrap;line-height:1.35">${escapeHtml(p.body)}</div>
-        </div>
-      `;
-    }).join("");
-  }
-
-  $("loginBtn").addEventListener("click", async () => {
-    const username = clean($("user").value);
-    const password = clean($("pass").value);
-    if(!USER_EMAIL[username]){ $("loginMsg").textContent = "Unknown username."; return; }
-
-    $("loginMsg").textContent = "Logging in...";
-    const { data, error } = await supabase.auth.signInWithPassword({ email: USER_EMAIL[username], password });
-    if(error){ $("loginMsg").textContent = "Wrong password."; return; }
-
-    await supabase.auth.updateUser({ data: { username } }).catch(()=>{});
-    $("loginMsg").textContent = "✅ Logged in.";
-    $("logoutBtn").classList.remove("hidden");
-    await ensureProfile(data.user);
-    await loadNews();
-    setTab("news");
+function render(){
+  const box = document.getElementById("newsList");
+  box.innerHTML="";
+  if(news.length===0){ box.innerHTML="No news yet."; return; }
+  news.forEach(n=>{
+    box.innerHTML += `
+      <div class="news">
+        <b>${n.title}</b> (${n.tag})<br>
+        ${n.body}
+        <div class="small">${n.author} • ${n.time}</div>
+      </div>`;
   });
+}
 
-  $("logoutBtn").addEventListener("click", async () => {
-    await supabase.auth.signOut();
-    $("loginMsg").textContent = "";
-    $("user").value = "";
-    $("pass").value = "";
-    setLoggedOutUI();
+function login(){
+  if(USERS[user.value]===pass.value){
+    currentUser=user.value;
+    msg.innerText="Logged in";
+    blocked.style.display="none";
+    postForm.style.display="block";
+    show("news");
+  } else {
+    msg.innerText="Wrong login";
+  }
+}
+
+function publish(){
+  if(!title.value || !body.value) return;
+  news.unshift({
+    title:title.value,
+    body:body.value,
+    tag:tag.value,
+    author:currentUser,
+    time:new Date().toLocaleString()
   });
+  save();
+  render();
+  title.value=""; body.value="";
+  show("news");
+}
 
-  $("publishBtn").addEventListener("click", async () => {
-    const { data: s } = await supabase.auth.getSession();
-    const user = s?.session?.user;
-    if(!user) return;
-
-    const title = clean($("title").value);
-    const body = clean($("body").value);
-    const tag = $("tag").value;
-
-    // country is auto-filled; block if blank
-    const country = clean($("country").value);
-
-    if(!country){
-      $("postMsg").textContent = "Your country is blank. Set it once in Change Flag.";
-      return;
-    }
-    if(!title || !body){
-      $("postMsg").textContent = "Title and body required.";
-      return;
-    }
-
-    const { data: prof } = await supabase.from("profiles").select("*").eq("uid", user.id).maybeSingle();
-    const author = prof?.username || "Unknown";
-
-    $("postMsg").textContent = "Posting...";
-    const { error } = await supabase.from("news_posts").insert({
-      title, body, country, tag,
-      author, author_uid: user.id
-    });
-
-    if(error){ $("postMsg").textContent = "Error posting."; return; }
-
-    $("postMsg").textContent = "✅ Posted!";
-    $("title").value = "";
-    $("body").value = "";
-    await loadNews();
-    setTab("news");
-  });
-
-  $("saveFlagBtn").addEventListener("click", async () => {
-    const { data: s } = await supabase.auth.getSession();
-    const user = s?.session?.user;
-    if(!user) return;
-
-    const country = clean($("myCountry").value);
-    const flag = clean($("myFlag").value) || "🏳️";
-
-    $("flagMsg").textContent = "Saving...";
-    const { error } = await supabase.from("profiles")
-      .update({ country, flag }).eq("uid", user.id);
-
-    if(error){ $("flagMsg").textContent = "Error saving."; return; }
-
-    $("flagMsg").textContent = "✅ Saved!";
-    $("country").value = country || "";
-    $("sessionPill").textContent = `Logged in: ${flag} ${clean($("user").value) || "User"}`;
-    await loadNews();
-  });
-
-  $("refreshBtn").addEventListener("click", loadNews);
-  $("q").addEventListener("input", loadNews);
-  $("tagFilter").addEventListener("change", loadNews);
-
-  (async () => {
-    await loadNews();
-    const { data: s } = await supabase.auth.getSession();
-    if(s?.session?.user){
-      $("logoutBtn").classList.remove("hidden");
-      await ensureProfile(s.session.user);
-    } else setLoggedOutUI();
-  })();
+render();
 </script>
+
 </body>
 </html>
