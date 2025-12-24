@@ -2,56 +2,117 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>RP News System</title>
+<title>RP System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
+:root{
+  --bg:#0b0f1a;
+  --card:#141a35;
+  --header:#12183a;
+  --accent:#3b5bff;
+  --text:#ffffff;
+  --muted:#aab0d6;
+}
+
 body {
   margin: 0;
   font-family: Arial, sans-serif;
-  background: #0b0f1a;
-  color: #fff;
+  background: var(--bg);
+  color: var(--text);
 }
+
+/* HEADER */
 header {
-  background: #12183a;
-  padding: 10px;
+  background: var(--header);
+  padding: 12px 14px;
   display: flex;
-  gap: 8px;
+  align-items: center;
+  gap: 10px;
   flex-wrap: wrap;
+  box-shadow: 0 4px 20px rgba(0,0,0,.3);
 }
+
+header .title {
+  font-weight: bold;
+  font-size: 18px;
+  margin-right: 10px;
+  white-space: nowrap;
+}
+
+/* BUTTONS */
 button {
-  background: #24307a;
+  background: linear-gradient(135deg,#3b5bff,#6f7cff);
   color: white;
   border: none;
   padding: 8px 14px;
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
+  font-weight: 600;
 }
-button:hover { opacity: 0.85; }
-section { display: none; padding: 15px; }
+button:hover { opacity: 0.9; }
+
+/* SECTIONS */
+section {
+  display: none;
+  padding: 16px;
+}
 section.active { display: block; }
 
+/* INPUTS */
 input, textarea, select {
   width: 100%;
-  padding: 8px;
-  margin: 6px 0;
-  border-radius: 6px;
+  padding: 10px;
+  margin: 8px 0;
+  border-radius: 8px;
   border: none;
+  background: #0f1533;
+  color: white;
 }
 
-.news {
-  background: #141a35;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 10px;
+/* CARDS */
+.card {
+  background: var(--card);
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  box-shadow: 0 6px 20px rgba(0,0,0,.35);
 }
-.small { font-size: 12px; opacity: 0.7; }
+
+/* NEWS */
+.news {
+  background: linear-gradient(180deg,#141a35,#10162e);
+  padding: 14px;
+  border-radius: 12px;
+  margin-bottom: 12px;
+  border-left: 4px solid var(--accent);
+}
+
+.news-title {
+  font-weight: bold;
+  font-size: 16px;
+}
+
+.tag {
+  font-size: 12px;
+  background: #2a356b;
+  padding: 2px 8px;
+  border-radius: 999px;
+  margin-left: 6px;
+}
+
+.small {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 6px;
+}
 </style>
 </head>
 
 <body>
 
 <header>
+  <div class="title">🌍 RP System</div>
   <button onclick="show('news')">News</button>
   <button onclick="show('post')">Post News</button>
   <button onclick="show('flag')">Change Flag</button>
@@ -65,8 +126,8 @@ input, textarea, select {
 
 <section id="post">
   <h2>Post News</h2>
-  <div id="postBlocked">Login required.</div>
-  <div id="postForm" style="display:none">
+  <div id="postBlocked" class="card">Login required.</div>
+  <div id="postForm" class="card" style="display:none">
     <input id="postTitle" placeholder="Title">
     <textarea id="postBody" placeholder="Write the news..."></textarea>
     <select id="postTag">
@@ -82,8 +143,8 @@ input, textarea, select {
 
 <section id="flag">
   <h2>Change Flag</h2>
-  <div id="flagBlocked">Login required.</div>
-  <div id="flagForm" style="display:none">
+  <div id="flagBlocked" class="card">Login required.</div>
+  <div id="flagForm" class="card" style="display:none">
     <input id="myCountry" placeholder="Country (e.g. RR)">
     <input id="myFlag" placeholder="Flag emoji (🇱🇧)">
     <button onclick="saveFlag()">Save</button>
@@ -93,10 +154,12 @@ input, textarea, select {
 
 <section id="login">
   <h2>Login</h2>
-  <input id="loginUser" placeholder="Username">
-  <input id="loginPass" type="password" placeholder="Password">
-  <button onclick="login()">Login</button>
-  <div class="small" id="loginMsg"></div>
+  <div class="card">
+    <input id="loginUser" placeholder="Username">
+    <input id="loginPass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <div class="small" id="loginMsg"></div>
+  </div>
 </section>
 
 <script>
@@ -141,8 +204,10 @@ function render(){
   news.forEach(n=>{
     box.innerHTML += `
       <div class="news">
-        <b>${n.flag} ${n.title}</b> (${n.tag})<br>
-        ${n.body}
+        <div class="news-title">${n.flag} ${n.title}
+          <span class="tag">${n.tag}</span>
+        </div>
+        <div>${n.body}</div>
         <div class="small">${n.country} • ${n.author} • ${n.time}</div>
       </div>`;
   });
