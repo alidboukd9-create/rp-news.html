@@ -1,20 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>RP News</title>
+<title>RP News System</title>
 <meta name="viewport" content="width=device-width, initial-scale=1">
+
 <style>
-body { margin:0; font-family:Arial; background:#0b0f1a; color:white; }
-header { background:#11162a; padding:10px; display:flex; gap:8px; flex-wrap:wrap; }
-button { background:#1c2450; color:white; border:none; padding:8px 14px; border-radius:6px; }
-section { display:none; padding:15px; }
-section.active { display:block; }
-input, textarea, select {
-  width:100%; padding:8px; margin:6px 0; border-radius:6px; border:none;
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #0b0f1a;
+  color: #fff;
 }
-.news { background:#141a35; padding:12px; border-radius:8px; margin-bottom:10px; }
-.small { font-size:12px; opacity:.7; }
+header {
+  background: #12183a;
+  padding: 10px;
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+button {
+  background: #24307a;
+  color: white;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+button:hover { opacity: 0.85; }
+section { display: none; padding: 15px; }
+section.active { display: block; }
+
+input, textarea, select {
+  width: 100%;
+  padding: 8px;
+  margin: 6px 0;
+  border-radius: 6px;
+  border: none;
+}
+
+.news {
+  background: #141a35;
+  padding: 12px;
+  border-radius: 8px;
+  margin-bottom: 10px;
+}
+.small { font-size: 12px; opacity: 0.7; }
 </style>
 </head>
 
@@ -23,6 +54,7 @@ input, textarea, select {
 <header>
   <button onclick="show('news')">News</button>
   <button onclick="show('post')">Post News</button>
+  <button onclick="show('flag')">Change Flag</button>
   <button onclick="show('login')">Login</button>
 </header>
 
@@ -33,11 +65,11 @@ input, textarea, select {
 
 <section id="post">
   <h2>Post News</h2>
-  <div id="blocked">Login required.</div>
+  <div id="postBlocked">Login required.</div>
   <div id="postForm" style="display:none">
-    <input id="title" placeholder="Title">
-    <textarea id="body" placeholder="News text"></textarea>
-    <select id="tag">
+    <input id="postTitle" placeholder="Title">
+    <textarea id="postBody" placeholder="Write the news..."></textarea>
+    <select id="postTag">
       <option>Breaking</option>
       <option>War</option>
       <option>Diplomacy</option>
@@ -48,15 +80,27 @@ input, textarea, select {
   </div>
 </section>
 
+<section id="flag">
+  <h2>Change Flag</h2>
+  <div id="flagBlocked">Login required.</div>
+  <div id="flagForm" style="display:none">
+    <input id="myCountry" placeholder="Country (e.g. RR)">
+    <input id="myFlag" placeholder="Flag emoji (🇱🇧)">
+    <button onclick="saveFlag()">Save</button>
+    <div class="small" id="flagMsg"></div>
+  </div>
+</section>
+
 <section id="login">
   <h2>Login</h2>
-  <input id="user" placeholder="Username">
-  <input id="pass" type="password" placeholder="Password">
+  <input id="loginUser" placeholder="Username">
+  <input id="loginPass" type="password" placeholder="Password">
   <button onclick="login()">Login</button>
-  <div class="small" id="msg"></div>
+  <div class="small" id="loginMsg"></div>
 </section>
 
 <script>
+/* USERS */
 const USERS = {
   "Aloushi":"AloushiOk",
   "Hamoudi haidar":"9928",
@@ -65,7 +109,16 @@ const USERS = {
   "Aloushi fares":"9usidjOheU"
 };
 
+const DEFAULTS = {
+  "Aloushi": { country:"RR", flag:"🏳" },
+  "Hamoudi haidar": { country:"UWK", flag:"🏳" },
+  "Rayano": { country:"WL", flag:"🏳" },
+  "Hamoudi 2 (hteit)": { country:"F.E", flag:"🏳" },
+  "Aloushi fares": { country:"", flag:"🏳" }
+};
+
 let currentUser = null;
+let profiles = JSON.parse(localStorage.getItem("rp_profiles") || "{}");
 let news = JSON.parse(localStorage.getItem("rp_news") || "[]");
 
 function show(id){
@@ -75,47 +128,97 @@ function show(id){
 
 function save(){
   localStorage.setItem("rp_news", JSON.stringify(news));
+  localStorage.setItem("rp_profiles", JSON.stringify(profiles));
 }
 
 function render(){
   const box = document.getElementById("newsList");
-  box.innerHTML="";
-  if(news.length===0){ box.innerHTML="No news yet."; return; }
+  box.innerHTML = "";
+  if(news.length === 0){
+    box.innerHTML = "No news yet.";
+    return;
+  }
   news.forEach(n=>{
     box.innerHTML += `
       <div class="news">
-        <b>${n.title}</b> (${n.tag})<br>
+        <b>${n.flag} ${n.title}</b> (${n.tag})<br>
         ${n.body}
-        <div class="small">${n.author} • ${n.time}</div>
+        <div class="small">${n.country} • ${n.author} • ${n.time}</div>
       </div>`;
   });
 }
 
 function login(){
-  if(USERS[user.value]===pass.value){
-    currentUser=user.value;
-    msg.innerText="Logged in";
-    blocked.style.display="none";
-    postForm.style.display="block";
-    show("news");
-  } else {
-    msg.innerText="Wrong login";
+  const u = loginUser.value.trim();
+  const p = loginPass.value.trim();
+
+  if(USERS[u] !== p){
+    loginMsg.innerText = "Wrong username or password";
+    return;
   }
+
+  currentUser = u;
+  loginMsg.innerText = "Logged in";
+
+  if(!profiles[u]){
+    profiles[u] = DEFAULTS[u] || { country:"", flag:"🏳" };
+    save();
+  }
+
+  postBlocked.style.display = "none";
+  postForm.style.display = "block";
+  flagBlocked.style.display = "none";
+  flagForm.style.display = "block";
+
+  myCountry.value = profiles[u].country;
+  myFlag.value = profiles[u].flag;
+
+  show("news");
 }
 
 function publish(){
-  if(!title.value || !body.value) return;
+  if(!currentUser) return;
+
+  const title = postTitle.value.trim();
+  const body = postBody.value.trim();
+  const tag = postTag.value;
+
+  if(!title || !body){
+    alert("Fill everything");
+    return;
+  }
+
+  const prof = profiles[currentUser];
+  if(!prof.country){
+    alert("Set your country first");
+    show("flag");
+    return;
+  }
+
   news.unshift({
-    title:title.value,
-    body:body.value,
-    tag:tag.value,
-    author:currentUser,
-    time:new Date().toLocaleString()
+    title,
+    body,
+    tag,
+    author: currentUser,
+    country: prof.country,
+    flag: prof.flag,
+    time: new Date().toLocaleString()
   });
+
   save();
+  postTitle.value = "";
+  postBody.value = "";
   render();
-  title.value=""; body.value="";
   show("news");
+}
+
+function saveFlag(){
+  if(!currentUser) return;
+
+  profiles[currentUser].country = myCountry.value.trim();
+  profiles[currentUser].flag = myFlag.value.trim() || "🏳";
+  save();
+  flagMsg.innerText = "Saved!";
 }
 
 render();
