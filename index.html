@@ -6,99 +6,39 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 
 <style>
-:root{
-  --bg:#0b0f1a;
-  --card:#141a35;
-  --header:#12183a;
-  --accent:#3b5bff;
-  --text:#ffffff;
-  --muted:#aab0d6;
-  --field:#0f1533;
-}
+:root{--bg:#0b0f1a;--card:#141a35;--header:#12183a;--accent:#3b5bff;--text:#fff;--muted:#aab0d6;--field:#0f1533}
 body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
-header{
-  background:var(--header);
-  padding:12px 14px;
-  display:flex;
-  align-items:center;
-  gap:10px;
-  flex-wrap:wrap;
-  box-shadow:0 4px 20px rgba(0,0,0,.3);
-}
+header{background:var(--header);padding:12px 14px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;box-shadow:0 4px 20px rgba(0,0,0,.3)}
 header .title{font-weight:800;font-size:18px;margin-right:10px;white-space:nowrap}
-button{
-  background:linear-gradient(135deg,#3b5bff,#6f7cff);
-  color:#fff;border:none;
-  padding:8px 14px;border-radius:10px;
-  cursor:pointer;font-weight:700;
-}
-button:hover{opacity:.9}
+#jsStatus{font-size:12px;color:#bfe7c1;background:rgba(20,120,60,.18);border:1px solid rgba(80,220,140,.25);padding:6px 10px;border-radius:999px}
+button{background:linear-gradient(135deg,#3b5bff,#6f7cff);color:#fff;border:none;padding:8px 14px;border-radius:10px;cursor:pointer;font-weight:700}
 section{display:none;padding:16px}
 section.active{display:block}
-
-.card{
-  background:var(--card);
-  padding:14px;border-radius:14px;
-  margin-bottom:12px;
-  box-shadow:0 6px 20px rgba(0,0,0,.35);
-}
-input, textarea, select{
-  width:100%;
-  padding:10px;margin:8px 0;
-  border-radius:10px;border:none;
-  background:var(--field);color:#fff;
-}
+.card{background:var(--card);padding:14px;border-radius:14px;margin-bottom:12px;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+input,textarea,select{width:100%;padding:10px;margin:8px 0;border-radius:10px;border:none;background:var(--field);color:#fff}
 textarea{min-height:120px;resize:vertical}
 .small{font-size:12px;color:var(--muted);margin-top:6px}
-
-.news{
-  background:linear-gradient(180deg,#141a35,#10162e);
-  padding:14px;border-radius:14px;
-  margin-bottom:12px;
-  border-left:4px solid var(--accent);
-}
+.news{background:linear-gradient(180deg,#141a35,#10162e);padding:14px;border-radius:14px;margin-bottom:12px;border-left:4px solid var(--accent)}
 .newsTop{display:flex;gap:10px;align-items:center}
-.flagImg{
-  width:34px;height:34px;border-radius:10px;
-  object-fit:cover;background:#0d1230;
-  border:1px solid rgba(255,255,255,.08);
-}
+.flagImg{width:34px;height:34px;border-radius:10px;object-fit:cover;background:#0d1230;border:1px solid rgba(255,255,255,.08)}
 .news-title{font-weight:900;font-size:16px}
-.tag{
-  font-size:12px;background:#2a356b;
-  padding:2px 8px;border-radius:999px;
-  margin-left:8px;display:inline-block;
-}
-
-.tools{
-  display:flex;gap:8px;flex-wrap:wrap;align-items:center
-}
-.tool{
-  background:#1a2354;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:10px;padding:8px 10px;
-  color:#fff;font-weight:700
-}
+.tag{font-size:12px;background:#2a356b;padding:2px 8px;border-radius:999px;margin-left:8px;display:inline-block}
+.tools{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.tool{background:#1a2354;border:1px solid rgba(255,255,255,.08);border-radius:10px;padding:8px 10px;color:#fff;font-weight:700}
 .tool select,.tool input{margin:0;padding:8px;border-radius:8px;border:none;background:#0f1533;color:#fff}
-.canvasWrap{
-  background:#0f1533;border-radius:14px;padding:10px;
-  border:1px solid rgba(255,255,255,.08);
-  overflow:hidden;
-}
-canvas{
-  width:100%;
-  height:320px;
-  background:#0b102a;
-  border-radius:12px;
-  display:block;
-}
+.canvasWrap{background:#0f1533;border-radius:14px;padding:10px;border:1px solid rgba(255,255,255,.08);overflow:hidden}
+canvas{width:100%;height:320px;background:#0b102a;border-radius:12px;display:block}
 hr.sep{border:none;border-top:1px solid rgba(255,255,255,.08);margin:14px 0}
+#errorBox{display:none;margin:16px;background:rgba(150,30,30,.18);border:1px solid rgba(255,80,80,.3);padding:12px;border-radius:12px;color:#ffd0d0;white-space:pre-wrap}
 </style>
 </head>
 
 <body>
+<div id="errorBox"></div>
+
 <header>
   <div class="title">🌍 RP System</div>
+  <div id="jsStatus">Loading…</div>
   <button onclick="show('news')">News</button>
   <button onclick="show('post')">Post News</button>
   <button onclick="show('edit')">Edit Country</button>
@@ -118,30 +58,22 @@ hr.sep{border:none;border-top:1px solid rgba(255,255,255,.08);margin:14px 0}
     <input id="postTitle" placeholder="Title">
     <textarea id="postBody" placeholder="Write the news..."></textarea>
     <select id="postTag">
-      <option>Breaking</option>
-      <option>War</option>
-      <option>Diplomacy</option>
-      <option>Economy</option>
-      <option>Other</option>
+      <option>Breaking</option><option>War</option><option>Diplomacy</option>
+      <option>Economy</option><option>Other</option>
     </select>
     <button onclick="publish()">Publish</button>
-    <div class="small">Tip: Set your country + image in “Edit Country” first.</div>
   </div>
 </section>
 
 <section id="edit">
   <h2>Edit Country</h2>
   <div id="editBlocked" class="card">Login required.</div>
-
   <div id="editForm" class="card" style="display:none">
-    <div class="small">Saved automatically on this device.</div>
-
     <input id="myCountry" placeholder="Country code (e.g. RR)">
-    <div class="small">Upload a picture (flag/logo). PNG/JPG recommended.</div>
+    <div class="small">Upload a picture (flag/logo)</div>
     <input id="myFlagFile" type="file" accept="image/*">
     <div class="small">Preview:</div>
     <img id="flagPreview" class="flagImg" alt="Preview" style="width:54px;height:54px;border-radius:14px">
-
     <div style="margin-top:10px">
       <button onclick="saveCountry()">Save</button>
       <span class="small" id="editMsg"></span>
@@ -152,32 +84,23 @@ hr.sep{border:none;border-top:1px solid rgba(255,255,255,.08);margin:14px 0}
 <section id="plans">
   <h2>Plans</h2>
   <div id="plansBlocked" class="card">Login required.</div>
-
   <div id="plansForm" class="card" style="display:none">
     <div class="small" id="plansTitle"></div>
 
     <div class="tools" style="margin-top:10px">
-      <div class="tool">
-        Tool:
+      <div class="tool">Tool:
         <select id="toolMode">
           <option value="pen">Pen</option>
           <option value="rect">Rectangle</option>
           <option value="circle">Circle</option>
         </select>
       </div>
-
-      <div class="tool">
-        Color:
-        <input id="strokeColor" type="color" value="#3b5bff">
-      </div>
-
-      <div class="tool">
-        Size:
+      <div class="tool">Color: <input id="strokeColor" type="color" value="#3b5bff"></div>
+      <div class="tool">Size:
         <select id="strokeSize">
           <option>2</option><option>4</option><option selected>6</option><option>8</option><option>12</option><option>16</option>
         </select>
       </div>
-
       <button onclick="clearCanvas()">Clear</button>
       <button onclick="savePlans()">Save Plans</button>
       <span class="small" id="plansMsg"></span>
@@ -188,14 +111,264 @@ hr.sep{border:none;border-top:1px solid rgba(255,255,255,.08);margin:14px 0}
     </div>
 
     <hr class="sep">
-
     <h3 style="margin:0 0 6px 0">Notes</h3>
     <textarea id="planNotes" placeholder="Write your country plans here..."></textarea>
-    <div class="small">Notes + drawing save per country.</div>
   </div>
 </section>
 
 <section id="login">
   <h2>Login</h2>
   <div class="card">
-    <input id="loginUser" placeholder
+    <input id="loginUser" placeholder="Username">
+    <input id="loginPass" type="password" placeholder="Password">
+    <button onclick="login()">Login</button>
+    <div class="small" id="loginMsg"></div>
+  </div>
+</section>
+
+<script>
+/* SHOW ERRORS ON SCREEN (so we can fix instantly) */
+window.onerror = function(msg, src, line, col){
+  const box = document.getElementById("errorBox");
+  box.style.display = "block";
+  box.textContent = "ERROR:\\n" + msg + "\\n" + (src||"") + ":" + line + ":" + col;
+};
+
+/* USERS */
+const USERS = {
+  "Aloushi":"AloushiOk",
+  "Hamoudi haidar":"9928",
+  "Rayano":"XYBIUY",
+  "Hamoudi 2 (hteit)":"xiwps68",
+  "Aloushi fares":"9usidjOheU"
+};
+const DEFAULTS = {
+  "Aloushi": { country:"RR", flagImg:"" },
+  "Hamoudi haidar": { country:"UWK", flagImg:"" },
+  "Rayano": { country:"WL", flagImg:"" },
+  "Hamoudi 2 (hteit)": { country:"F.E", flagImg:"" },
+  "Aloushi fares": { country:"", flagImg:"" }
+};
+
+let currentUser = null;
+let profiles = JSON.parse(localStorage.getItem("rp_profiles") || "{}");
+let news = JSON.parse(localStorage.getItem("rp_news") || "[]");
+
+const el = (id)=>document.getElementById(id);
+const jsStatus = el("jsStatus");
+
+function show(id){
+  document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
+  el(id).classList.add("active");
+  if(id==="plans") refreshPlansUI();
+}
+
+function saveAll(){
+  localStorage.setItem("rp_news", JSON.stringify(news));
+  localStorage.setItem("rp_profiles", JSON.stringify(profiles));
+}
+
+function escapeHtml(str){
+  return (str ?? "").toString()
+    .replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;").replaceAll("'","&#039;");
+}
+
+function renderNews(){
+  const box = el("newsList");
+  box.innerHTML = "";
+  if(news.length === 0){ box.innerHTML = "No news yet."; return; }
+
+  news.forEach(n=>{
+    const img = n.flagImg ? <img class="flagImg" src="${n.flagImg}" alt="flag"> : <div class="flagImg"></div>;
+    box.innerHTML += `
+      <div class="news">
+        <div class="newsTop">
+          ${img}
+          <div>
+            <div class="news-title">${escapeHtml(n.title)} <span class="tag">${escapeHtml(n.tag)}</span></div>
+            <div class="small">${escapeHtml(n.country)} • ${escapeHtml(n.author)} • ${escapeHtml(n.time)}</div>
+          </div>
+        </div>
+        <div style="margin-top:10px">${escapeHtml(n.body).replaceAll("\\n","<br>")}</div>
+      </div>`;
+  });
+}
+
+function setLoggedInUI(){
+  el("postBlocked").style.display="none";
+  el("postForm").style.display="block";
+  el("editBlocked").style.display="none";
+  el("editForm").style.display="block";
+  el("plansBlocked").style.display="none";
+  el("plansForm").style.display="block";
+
+  el("myCountry").value = profiles[currentUser].country || "";
+  el("flagPreview").src = profiles[currentUser].flagImg || "";
+  refreshPlansUI();
+}
+
+function login(){
+  const u = el("loginUser").value.trim();
+  const p = el("loginPass").value.trim();
+  if(USERS[u] !== p){ el("loginMsg").innerText="Wrong username or password"; return; }
+  currentUser = u;
+  el("loginMsg").innerText="Logged in";
+  if(!profiles[u]){ profiles[u] = DEFAULTS[u] ? {...DEFAULTS[u]} : {country:"",flagImg:""}; saveAll(); }
+  setLoggedInUI();
+  show("news");
+}
+
+function publish(){
+  if(!currentUser) return;
+  const title = el("postTitle").value.trim();
+  const body  = el("postBody").value.trim();
+  const tag   = el("postTag").value;
+  if(!title || !body){ alert("Fill everything"); return; }
+  const prof = profiles[currentUser];
+  if(!prof.country){ alert("Set your country first"); show("edit"); return; }
+
+  news.unshift({
+    title, body, tag,
+    author: currentUser,
+    country: prof.country,
+    flagImg: prof.flagImg || "",
+    time: new Date().toLocaleString()
+  });
+  saveAll();
+  el("postTitle").value=""; el("postBody").value="";
+  renderNews(); show("news");
+}
+
+function fileToDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const r = new FileReader();
+    r.onload=()=>resolve(r.result);
+    r.onerror=reject;
+    r.readAsDataURL(file);
+  });
+}
+
+el("myFlagFile").addEventListener("change", async (e)=>{
+  if(!currentUser) return;
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  el("flagPreview").src = await fileToDataURL(file);
+});
+
+function saveCountry(){
+  if(!currentUser) return;
+  profiles[currentUser].country = el("myCountry").value.trim();
+  const img = el("flagPreview").src || "";
+  profiles[currentUser].flagImg = img.startsWith("data:") ? img : (profiles[currentUser].flagImg || "");
+  saveAll();
+  el("editMsg").innerText="Saved!";
+  setTimeout(()=>el("editMsg").innerText="", 1200);
+  renderNews();
+  refreshPlansUI();
+}
+
+/* Plans + canvas */
+const planCanvas = el("planCanvas");
+const ctx = planCanvas.getContext("2d");
+
+function plansKey(c){ return "rp_plans_" + (c || "NO_COUNTRY"); }
+
+function refreshPlansUI(){
+  if(!currentUser) return;
+  const c = (profiles[currentUser].country || "").trim();
+  el("plansTitle").textContent = c ? ("Planning Board for: " + c) : "Planning Board (set your country in Edit Country)";
+  loadPlans();
+}
+
+function savePlans(){
+  if(!currentUser) return;
+  const c = (profiles[currentUser].country || "").trim();
+  if(!c){ alert("Set your country first"); show("edit"); return; }
+  localStorage.setItem(plansKey(c), JSON.stringify({
+    canvasData: planCanvas.toDataURL("image/png"),
+    notes: el("planNotes").value || "",
+    savedAt: new Date().toLocaleString()
+  }));
+  el("plansMsg").textContent="Saved!";
+  setTimeout(()=>el("plansMsg").textContent="", 1200);
+}
+
+function loadPlans(){
+  if(!currentUser) return;
+  const c = (profiles[currentUser].country || "").trim();
+  if(!c){ el("planNotes").value=""; clearCanvas(true); return; }
+  const raw = localStorage.getItem(plansKey(c));
+  if(!raw){ el("planNotes").value=""; clearCanvas(true); return; }
+  const data = JSON.parse(raw);
+  el("planNotes").value = data.notes || "";
+  if(data.canvasData){
+    const img = new Image();
+    img.onload=()=>{ ctx.clearRect(0,0,planCanvas.width,planCanvas.height); ctx.drawImage(img,0,0,planCanvas.width,planCanvas.height); };
+    img.src = data.canvasData;
+  }else clearCanvas(true);
+}
+
+let drawing=false, startX=0, startY=0, snap=null;
+function getPos(e){
+  const r = planCanvas.getBoundingClientRect();
+  const cx = (e.touches?e.touches[0].clientX:e.clientX);
+  const cy = (e.touches?e.touches[0].clientY:e.clientY);
+  return {x:(cx-r.left)(planCanvas.width/r.width), y:(cy-r.top)(planCanvas.height/r.height)};
+}
+
+function beginDraw(e){
+  if(!currentUser) return;
+  const c = (profiles[currentUser].country || "").trim();
+  if(!c){ alert("Set country first"); show("edit"); return; }
+  drawing=true;
+  const p=getPos(e); startX=p.x; startY=p.y;
+  ctx.lineCap="round"; ctx.lineJoin="round";
+  ctx.strokeStyle=el("strokeColor").value;
+  ctx.lineWidth=parseInt(el("strokeSize").value,10);
+  snap = ctx.getImageData(0,0,planCanvas.width,planCanvas.height);
+  if(el("toolMode").value==="pen"){ ctx.beginPath(); ctx.moveTo(startX,startY); }
+  e.preventDefault();
+}
+function drawShape(x1,y1,x2,y2){
+  if(el("toolMode").value==="rect") ctx.strokeRect(x1,y1,x2-x1,y2-y1);
+  if(el("toolMode").value==="circle"){ const r=Math.hypot(x2-x1,y2-y1); ctx.beginPath(); ctx.arc(x1,y1,r,0,Math.PI*2); ctx.stroke(); }
+}
+function moveDraw(e){
+  if(!drawing) return;
+  const p=getPos(e);
+  if(el("toolMode").value==="pen"){ ctx.lineTo(p.x,p.y); ctx.stroke(); }
+  else { if(snap) ctx.putImageData(snap,0,0); drawShape(startX,startY,p.x,p.y); }
+  e.preventDefault();
+}
+function endDraw(e){
+  if(!drawing) return;
+  drawing=false;
+  const p=getPos(e);
+  if(el("toolMode").value!=="pen"){ if(snap) ctx.putImageData(snap,0,0); drawShape(startX,startY,p.x,p.y); }
+  snap=null;
+  e.preventDefault();
+}
+function clearCanvas(silent){
+  ctx.clearRect(0,0,planCanvas.width,planCanvas.height);
+  ctx.save(); ctx.globalAlpha=0.08; ctx.strokeStyle="#fff"; ctx.lineWidth=1;
+  for(let x=0;x<planCanvas.width;x+=60){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,planCanvas.height); ctx.stroke(); }
+  for(let y=0;y<planCanvas.height;y+=60){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(planCanvas.width,y); ctx.stroke(); }
+  ctx.restore();
+  if(!silent){ el("plansMsg").textContent="Cleared"; setTimeout(()=>el("plansMsg").textContent="",1200); }
+}
+
+planCanvas.addEventListener("mousedown", beginDraw);
+planCanvas.addEventListener("mousemove", moveDraw);
+window.addEventListener("mouseup", endDraw);
+planCanvas.addEventListener("touchstart", beginDraw, {passive:false});
+planCanvas.addEventListener("touchmove", moveDraw, {passive:false});
+planCanvas.addEventListener("touchend", endDraw, {passive:false});
+
+/* INIT */
+jsStatus.textContent = "JS IS RUNNING ✅";
+renderNews();
+clearCanvas(true);
+</script>
+</body>
+</html>
