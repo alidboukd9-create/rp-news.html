@@ -13,109 +13,96 @@
   --accent:#3b5bff;
   --text:#ffffff;
   --muted:#aab0d6;
+  --field:#0f1533;
+}
+body{margin:0;font-family:Arial,sans-serif;background:var(--bg);color:var(--text)}
+header{
+  background:var(--header);
+  padding:12px 14px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  flex-wrap:wrap;
+  box-shadow:0 4px 20px rgba(0,0,0,.3);
+}
+header .title{font-weight:800;font-size:18px;margin-right:10px;white-space:nowrap}
+button{
+  background:linear-gradient(135deg,#3b5bff,#6f7cff);
+  color:#fff;border:none;
+  padding:8px 14px;border-radius:10px;
+  cursor:pointer;font-weight:700;
+}
+button:hover{opacity:.9}
+section{display:none;padding:16px}
+section.active{display:block}
+
+.card{
+  background:var(--card);
+  padding:14px;border-radius:14px;
+  margin-bottom:12px;
+  box-shadow:0 6px 20px rgba(0,0,0,.35);
+}
+input, textarea, select{
+  width:100%;
+  padding:10px;margin:8px 0;
+  border-radius:10px;border:none;
+  background:var(--field);color:#fff;
+}
+textarea{min-height:120px;resize:vertical}
+.small{font-size:12px;color:var(--muted);margin-top:6px}
+
+.news{
+  background:linear-gradient(180deg,#141a35,#10162e);
+  padding:14px;border-radius:14px;
+  margin-bottom:12px;
+  border-left:4px solid var(--accent);
+}
+.newsTop{display:flex;gap:10px;align-items:center}
+.flagImg{
+  width:34px;height:34px;border-radius:10px;
+  object-fit:cover;background:#0d1230;
+  border:1px solid rgba(255,255,255,.08);
+}
+.news-title{font-weight:900;font-size:16px}
+.tag{
+  font-size:12px;background:#2a356b;
+  padding:2px 8px;border-radius:999px;
+  margin-left:8px;display:inline-block;
 }
 
-body {
-  margin: 0;
-  font-family: Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
+.tools{
+  display:flex;gap:8px;flex-wrap:wrap;align-items:center
 }
-
-/* HEADER */
-header {
-  background: var(--header);
-  padding: 12px 14px;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;
-  box-shadow: 0 4px 20px rgba(0,0,0,.3);
+.tool{
+  background:#1a2354;
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:10px;padding:8px 10px;
+  color:#fff;font-weight:700
 }
-
-header .title {
-  font-weight: bold;
-  font-size: 18px;
-  margin-right: 10px;
-  white-space: nowrap;
+.tool select,.tool input{margin:0;padding:8px;border-radius:8px;border:none;background:#0f1533;color:#fff}
+.canvasWrap{
+  background:#0f1533;border-radius:14px;padding:10px;
+  border:1px solid rgba(255,255,255,.08);
+  overflow:hidden;
 }
-
-/* BUTTONS */
-button {
-  background: linear-gradient(135deg,#3b5bff,#6f7cff);
-  color: white;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: 600;
+canvas{
+  width:100%;
+  height:320px;
+  background:#0b102a;
+  border-radius:12px;
+  display:block;
 }
-button:hover { opacity: 0.9; }
-
-/* SECTIONS */
-section {
-  display: none;
-  padding: 16px;
-}
-section.active { display: block; }
-
-/* INPUTS */
-input, textarea, select {
-  width: 100%;
-  padding: 10px;
-  margin: 8px 0;
-  border-radius: 8px;
-  border: none;
-  background: #0f1533;
-  color: white;
-}
-
-/* CARDS */
-.card {
-  background: var(--card);
-  padding: 14px;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  box-shadow: 0 6px 20px rgba(0,0,0,.35);
-}
-
-/* NEWS */
-.news {
-  background: linear-gradient(180deg,#141a35,#10162e);
-  padding: 14px;
-  border-radius: 12px;
-  margin-bottom: 12px;
-  border-left: 4px solid var(--accent);
-}
-
-.news-title {
-  font-weight: bold;
-  font-size: 16px;
-}
-
-.tag {
-  font-size: 12px;
-  background: #2a356b;
-  padding: 2px 8px;
-  border-radius: 999px;
-  margin-left: 6px;
-}
-
-.small {
-  font-size: 12px;
-  color: var(--muted);
-  margin-top: 6px;
-}
+hr.sep{border:none;border-top:1px solid rgba(255,255,255,.08);margin:14px 0}
 </style>
 </head>
 
 <body>
-
 <header>
   <div class="title">🌍 RP System</div>
   <button onclick="show('news')">News</button>
   <button onclick="show('post')">Post News</button>
-  <button onclick="show('flag')">Change Flag</button>
+  <button onclick="show('edit')">Edit Country</button>
+  <button onclick="show('plans')">Plans</button>
   <button onclick="show('login')">Login</button>
 </header>
 
@@ -138,17 +125,73 @@ input, textarea, select {
       <option>Other</option>
     </select>
     <button onclick="publish()">Publish</button>
+    <div class="small">Tip: Set your country + image in “Edit Country” first.</div>
   </div>
 </section>
 
-<section id="flag">
-  <h2>Change Flag</h2>
-  <div id="flagBlocked" class="card">Login required.</div>
-  <div id="flagForm" class="card" style="display:none">
-    <input id="myCountry" placeholder="Country (e.g. RR)">
-    <input id="myFlag" placeholder="Flag emoji (🇱🇧)">
-    <button onclick="saveFlag()">Save</button>
-    <div class="small" id="flagMsg"></div>
+<section id="edit">
+  <h2>Edit Country</h2>
+  <div id="editBlocked" class="card">Login required.</div>
+
+  <div id="editForm" class="card" style="display:none">
+    <div class="small">This is saved automatically for your user on this device.</div>
+
+    <input id="myCountry" placeholder="Country code (e.g. RR)">
+    <div class="small">Upload a picture (flag/logo). PNG/JPG recommended.</div>
+    <input id="myFlagFile" type="file" accept="image/*">
+    <div class="small">Preview:</div>
+    <img id="flagPreview" class="flagImg" alt="Preview" style="width:54px;height:54px;border-radius:14px">
+
+    <div style="margin-top:10px">
+      <button onclick="saveCountry()">Save</button>
+      <span class="small" id="editMsg"></span>
+    </div>
+  </div>
+</section>
+
+<section id="plans">
+  <h2>Plans</h2>
+  <div id="plansBlocked" class="card">Login required.</div>
+
+  <div id="plansForm" class="card" style="display:none">
+    <div class="small" id="plansTitle"></div>
+
+    <div class="tools" style="margin-top:10px">
+      <div class="tool">
+        Tool:
+        <select id="toolMode">
+          <option value="pen">Pen</option>
+          <option value="rect">Rectangle</option>
+          <option value="circle">Circle</option>
+        </select>
+      </div>
+
+      <div class="tool">
+        Color:
+        <input id="strokeColor" type="color" value="#3b5bff">
+      </div>
+
+      <div class="tool">
+        Size:
+        <select id="strokeSize">
+          <option>2</option><option>4</option><option selected>6</option><option>8</option><option>12</option><option>16</option>
+        </select>
+      </div>
+
+      <button onclick="clearCanvas()">Clear</button>
+      <button onclick="savePlans()">Save Plans</button>
+      <span class="small" id="plansMsg"></span>
+    </div>
+
+    <div class="canvasWrap" style="margin-top:12px">
+      <canvas id="planCanvas" width="1200" height="600"></canvas>
+    </div>
+
+    <hr class="sep">
+
+    <h3 style="margin:0 0 6px 0">Notes</h3>
+    <textarea id="planNotes" placeholder="Write your country plans here..."></textarea>
+    <div class="small">Notes + drawing save per country.</div>
   </div>
 </section>
 
@@ -172,45 +215,81 @@ const USERS = {
   "Aloushi fares":"9usidjOheU"
 };
 
+/* DEFAULTS (image is empty by default) */
 const DEFAULTS = {
-  "Aloushi": { country:"RR", flag:"🏳" },
-  "Hamoudi haidar": { country:"UWK", flag:"🏳" },
-  "Rayano": { country:"WL", flag:"🏳" },
-  "Hamoudi 2 (hteit)": { country:"F.E", flag:"🏳" },
-  "Aloushi fares": { country:"", flag:"🏳" }
+  "Aloushi": { country:"RR", flagImg:"" },
+  "Hamoudi haidar": { country:"UWK", flagImg:"" },
+  "Rayano": { country:"WL", flagImg:"" },
+  "Hamoudi 2 (hteit)": { country:"F.E", flagImg:"" },
+  "Aloushi fares": { country:"", flagImg:"" }
 };
 
 let currentUser = null;
 let profiles = JSON.parse(localStorage.getItem("rp_profiles") || "{}");
 let news = JSON.parse(localStorage.getItem("rp_news") || "[]");
 
+/* --- NAV --- */
 function show(id){
   document.querySelectorAll("section").forEach(s=>s.classList.remove("active"));
   document.getElementById(id).classList.add("active");
+
+  // refresh plans UI title when opening plans
+  if(id === "plans") refreshPlansUI();
 }
 
-function save(){
+/* --- SAVE/LOAD --- */
+function saveAll(){
   localStorage.setItem("rp_news", JSON.stringify(news));
   localStorage.setItem("rp_profiles", JSON.stringify(profiles));
 }
 
-function render(){
+/* --- NEWS RENDER --- */
+function renderNews(){
   const box = document.getElementById("newsList");
   box.innerHTML = "";
   if(news.length === 0){
     box.innerHTML = "No news yet.";
     return;
   }
+
   news.forEach(n=>{
+    const img = n.flagImg ? <img class="flagImg" src="${n.flagImg}" alt="flag"> : <div class="flagImg"></div>;
     box.innerHTML += `
       <div class="news">
-        <div class="news-title">${n.flag} ${n.title}
-          <span class="tag">${n.tag}</span>
+        <div class="newsTop">
+          ${img}
+          <div>
+            <div class="news-title">${escapeHtml(n.title)} <span class="tag">${escapeHtml(n.tag)}</span></div>
+            <div class="small">${escapeHtml(n.country)} • ${escapeHtml(n.author)} • ${escapeHtml(n.time)}</div>
+          </div>
         </div>
-        <div>${n.body}</div>
-        <div class="small">${n.country} • ${n.author} • ${n.time}</div>
+        <div style="margin-top:10px">${escapeHtml(n.body).replaceAll("\n","<br>")}</div>
       </div>`;
   });
+}
+
+function escapeHtml(str){
+  return (str ?? "").toString()
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+/* --- LOGIN --- */
+function setLoggedInUI(){
+  postBlocked.style.display = "none";
+  postForm.style.display = "block";
+  editBlocked.style.display = "none";
+  editForm.style.display = "block";
+  plansBlocked.style.display = "none";
+  plansForm.style.display = "block";
+
+  // Fill edit fields
+  myCountry.value = profiles[currentUser].country || "";
+  flagPreview.src = profiles[currentUser].flagImg || "";
+  refreshPlansUI();
 }
 
 function login(){
@@ -226,21 +305,15 @@ function login(){
   loginMsg.innerText = "Logged in";
 
   if(!profiles[u]){
-    profiles[u] = DEFAULTS[u] || { country:"", flag:"🏳" };
-    save();
+    profiles[u] = DEFAULTS[u] ? {...DEFAULTS[u]} : { country:"", flagImg:"" };
+    saveAll();
   }
 
-  postBlocked.style.display = "none";
-  postForm.style.display = "block";
-  flagBlocked.style.display = "none";
-  flagForm.style.display = "block";
-
-  myCountry.value = profiles[u].country;
-  myFlag.value = profiles[u].flag;
-
+  setLoggedInUI();
   show("news");
 }
 
+/* --- POST NEWS --- */
 function publish(){
   if(!currentUser) return;
 
@@ -256,7 +329,7 @@ function publish(){
   const prof = profiles[currentUser];
   if(!prof.country){
     alert("Set your country first");
-    show("flag");
+    show("edit");
     return;
   }
 
@@ -266,27 +339,243 @@ function publish(){
     tag,
     author: currentUser,
     country: prof.country,
-    flag: prof.flag,
+    flagImg: prof.flagImg || "",
     time: new Date().toLocaleString()
   });
 
-  save();
+  saveAll();
   postTitle.value = "";
   postBody.value = "";
-  render();
+  renderNews();
   show("news");
 }
 
-function saveFlag(){
+/* --- EDIT COUNTRY (image) --- */
+myFlagFile?.addEventListener?.("change", async (e) => {
   if(!currentUser) return;
+  const file = e.target.files?.[0];
+  if(!file) return;
 
-  profiles[currentUser].country = myCountry.value.trim();
-  profiles[currentUser].flag = myFlag.value.trim() || "🏳";
-  save();
-  flagMsg.innerText = "Saved!";
+  // Convert to dataURL so it works offline / localStorage
+  const dataUrl = await fileToDataURL(file);
+  flagPreview.src = dataUrl;
+
+  // We don't auto-save; user presses Save
+});
+
+function fileToDataURL(file){
+  return new Promise((resolve,reject)=>{
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
 }
 
-render();
+function saveCountry(){
+  if(!currentUser) return;
+  const country = myCountry.value.trim();
+  const img = flagPreview.src || "";
+
+  profiles[currentUser].country = country;
+  profiles[currentUser].flagImg = img.startsWith("data:") ? img : (profiles[currentUser].flagImg || "");
+
+  saveAll();
+  editMsg.innerText = "Saved!";
+  setTimeout(()=>editMsg.innerText="", 1200);
+
+  refreshPlansUI();
+  renderNews();
+}
+
+/* --- PLANS (per country) --- */
+function plansKey(country){ return rp_plans_${country || "NO_COUNTRY"}; }
+
+function refreshPlansUI(){
+  if(!currentUser) return;
+  const c = profiles[currentUser]?.country || "";
+  plansTitle.textContent = c ? Planning Board for: ${c} : "Planning Board (set your country in Edit Country)";
+  loadPlans(); // load current country plans whenever you open the tab
+}
+
+function savePlans(){
+  if(!currentUser) return;
+
+  const c = (profiles[currentUser]?.country || "").trim();
+  if(!c){
+    alert("Set your country first in Edit Country.");
+    show("edit");
+    return;
+  }
+
+  const canvasData = planCanvas.toDataURL("image/png");
+  const notes = planNotes.value || "";
+
+  localStorage.setItem(plansKey(c), JSON.stringify({
+    canvasData,
+    notes,
+    savedAt: new Date().toLocaleString()
+  }));
+
+  plansMsg.textContent = "Saved!";
+  setTimeout(()=>plansMsg.textContent="", 1200);
+}
+
+function loadPlans(){
+  if(!currentUser) return;
+
+  const c = (profiles[currentUser]?.country || "").trim();
+  if(!c){
+    planNotes.value = "";
+    clearCanvas(true);
+    return;
+  }
+
+  const raw = localStorage.getItem(plansKey(c));
+  if(!raw){
+    planNotes.value = "";
+    clearCanvas(true);
+    return;
+  }
+
+  const data = JSON.parse(raw);
+  planNotes.value = data.notes || "";
+
+  if(data.canvasData){
+    const img = new Image();
+    img.onload = () => {
+      ctx.clearRect(0,0,planCanvas.width, planCanvas.height);
+      ctx.drawImage(img,0,0,planCanvas.width, planCanvas.height);
+    };
+    img.src = data.canvasData;
+  }else{
+    clearCanvas(true);
+  }
+}
+
+/* --- Canvas Drawing Tools --- */
+const planCanvas = document.getElementById("planCanvas");
+const ctx = planCanvas.getContext("2d");
+
+let drawing = false;
+let startX = 0, startY = 0;
+let snapshot = null; // for shape preview
+
+function getPos(e){
+  const rect = planCanvas.getBoundingClientRect();
+  const clientX = (e.touches ? e.touches[0].clientX : e.clientX);
+  const clientY = (e.touches ? e.touches[0].clientY : e.clientY);
+  // Scale to canvas resolution
+  const x = (clientX - rect.left) * (planCanvas.width / rect.width);
+  const y = (clientY - rect.top) * (planCanvas.height / rect.height);
+  return {x,y};
+}
+
+function beginDraw(e){
+  if(!currentUser) return;
+  const c = (profiles[currentUser]?.country || "").trim();
+  if(!c){ alert("Set your country first in Edit Country."); show("edit"); return; }
+
+  drawing = true;
+  const p = getPos(e);
+  startX = p.x; startY = p.y;
+
+  ctx.lineCap = "round";
+  ctx.lineJoin = "round";
+  ctx.strokeStyle = strokeColor.value;
+  ctx.lineWidth = parseInt(strokeSize.value,10);
+
+  snapshot = ctx.getImageData(0,0,planCanvas.width,planCanvas.height);
+
+  if(toolMode.value === "pen"){
+    ctx.beginPath();
+    ctx.moveTo(startX,startY);
+  }
+
+  e.preventDefault();
+}
+
+function moveDraw(e){
+  if(!drawing) return;
+  const p = getPos(e);
+
+  if(toolMode.value === "pen"){
+    ctx.lineTo(p.x,p.y);
+    ctx.stroke();
+  }else{
+    // restore snapshot for preview
+    if(snapshot) ctx.putImageData(snapshot,0,0);
+    drawShapePreview(startX,startY,p.x,p.y);
+  }
+
+  e.preventDefault();
+}
+
+function endDraw(e){
+  if(!drawing) return;
+  drawing = false;
+
+  const p = getPos(e);
+
+  if(toolMode.value !== "pen"){
+    if(snapshot) ctx.putImageData(snapshot,0,0);
+    drawShapeFinal(startX,startY,p.x,p.y);
+  }
+
+  snapshot = null;
+  e.preventDefault();
+}
+
+function drawShapePreview(x1,y1,x2,y2){
+  ctx.strokeStyle = strokeColor.value;
+  ctx.lineWidth = parseInt(strokeSize.value,10);
+
+  if(toolMode.value === "rect"){
+    const w = x2 - x1, h = y2 - y1;
+    ctx.strokeRect(x1,y1,w,h);
+  }else if(toolMode.value === "circle"){
+    const r = Math.hypot(x2-x1,y2-y1);
+    ctx.beginPath();
+    ctx.arc(x1,y1,r,0,Math.PI*2);
+    ctx.stroke();
+  }
+}
+
+function drawShapeFinal(x1,y1,x2,y2){
+  drawShapePreview(x1,y1,x2,y2);
+}
+
+function clearCanvas(silent=false){
+  ctx.clearRect(0,0,planCanvas.width,planCanvas.height);
+  // Optional background grid feel (subtle)
+  ctx.save();
+  ctx.globalAlpha = 0.08;
+  ctx.strokeStyle = "#ffffff";
+  ctx.lineWidth = 1;
+  for(let x=0;x<planCanvas.width;x+=60){
+    ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,planCanvas.height); ctx.stroke();
+  }
+  for(let y=0;y<planCanvas.height;y+=60){
+    ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(planCanvas.width,y); ctx.stroke();
+  }
+  ctx.restore();
+  if(!silent) plansMsg.textContent = "Cleared (remember to Save Plans)";
+  setTimeout(()=>{ if(!silent) plansMsg.textContent=""; }, 1200);
+}
+
+// Mouse
+planCanvas.addEventListener("mousedown", beginDraw);
+planCanvas.addEventListener("mousemove", moveDraw);
+window.addEventListener("mouseup", endDraw);
+
+// Touch
+planCanvas.addEventListener("touchstart", beginDraw, {passive:false});
+planCanvas.addEventListener("touchmove", moveDraw, {passive:false});
+planCanvas.addEventListener("touchend", endDraw, {passive:false});
+
+/* --- Initial render --- */
+renderNews();
+clearCanvas(true);
 </script>
 
 </body>
